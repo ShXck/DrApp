@@ -18,7 +18,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".general.HomePageActivity" />
-        <activity android:name=".general.MainMenuActivity"></activity>
+        <activity android:name=".general.MainMenuActivity" />
+        <activity android:name=".general.AppointmentsActivity" />
+        <activity android:name=".general.AppointmentInfoActivity"></activity>
     </application>
 
 </manifest>

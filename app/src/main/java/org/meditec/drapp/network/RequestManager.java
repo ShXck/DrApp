@@ -42,7 +42,8 @@ public class RequestManager {
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
-                    Log.i("Response", response.body().string());
+                    SAVE_RESPONSE_DATA(response.body().string());
+                    Log.i("Response", recent_data);
                 }
             });
 
@@ -51,7 +52,7 @@ public class RequestManager {
         }
     }
 
-    public static String GET(String parameter){
+    public static void GET(String parameter){
 
         String URL =  "http://192.168.1.6:7500/MediTECServer/meditec/medics/" + parameter;
 
@@ -74,11 +75,48 @@ public class RequestManager {
                 Log.i("Response", recent_data);
             }
         });
-        return recent_data;
+    }
+
+    public static void PUT(String parameter, String data){
+
+        String URL =  "http://192.168.1.6:7500/MediTECServer/meditec/medics/" + parameter;
+
+        try{
+            MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
+            RequestBody body = RequestBody.create(JSON, data);
+            final Request request = new Request.Builder()
+                    .url(URL)
+                    .put(body)
+                    .build();
+
+            Call call = client.newCall(request);
+
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e("Error", "request ->" + call);
+                    e.printStackTrace();
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    SAVE_RESPONSE_DATA(response.body().string());
+                    Log.i("Response", recent_data);
+                }
+            });
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private static void SAVE_RESPONSE_DATA(String data){
         recent_data = data;
+    }
+
+    public static String GET_REQUEST_DATA(){
+        return recent_data;
     }
 
     public static void wait_for_response(int time){

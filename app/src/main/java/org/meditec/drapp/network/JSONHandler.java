@@ -18,4 +18,38 @@ public class JSONHandler {
         }
         return med_info.toString();
     }
+
+    public static String deserialize_identifier(String json_identifier){
+        try {
+            JSONObject identifier = new JSONObject(json_identifier);
+            return identifier.getString("id");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String get_appointment_info(String symptoms, String medication, String tests, String clinic_cases){
+
+        JSONObject info = new JSONObject();
+        try {
+            info.put("symptoms", symptoms);
+            info.put("medication", medication);
+            info.put("tests", tests);
+
+            if (clinic_cases != null) info.put("clinic_cases", clinic_cases);
+        }catch (JSONException j){
+            j.printStackTrace();
+        }
+        return info.toString();
+    }
+
+    public static JSONObject parse(String info){
+        try {
+            return new JSONObject(info);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

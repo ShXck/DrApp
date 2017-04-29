@@ -4,16 +4,15 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.linkedin.platform.APIHelper;
 import com.linkedin.platform.errors.LIApiError;
 import com.linkedin.platform.listeners.ApiListener;
 import com.linkedin.platform.listeners.ApiResponse;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 import org.meditec.drapp.R;
@@ -29,15 +28,14 @@ public class HomePageActivity extends AppCompatActivity {
 
     private ProgressDialog progress;
     private TextView user_name, user_email;
-    private ImageView profile_picture;
     private Button menu_button;
+    public static String identifier;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
-        // Initialize the progressbar
         progress= new ProgressDialog(this);
         progress.setMessage("Retrieving data...");
         progress.setCanceledOnTouchOutside(false);
@@ -45,7 +43,6 @@ public class HomePageActivity extends AppCompatActivity {
 
         user_email = (TextView) findViewById(R.id.email);
         user_name = (TextView) findViewById(R.id.name);
-        profile_picture = (ImageView) findViewById(R.id.profile_picture);
         menu_button = (Button)findViewById(R.id.main_button);
 
         menu_button.setOnClickListener(new View.OnClickListener() {
@@ -71,7 +68,7 @@ public class HomePageActivity extends AppCompatActivity {
             public void onApiSuccess(ApiResponse result) {
                 try {
                     showResult(result.getResponseDataAsJson());
-                    RequestManager.POST("login", JSONHandler.get_json_med_info(user_name.getText().toString(), user_email.getText().toString()));
+                    login();
                     progress.dismiss();
 
                 } catch (Exception e) {
@@ -86,15 +83,15 @@ public class HomePageActivity extends AppCompatActivity {
         });
     }
 
+    private void login() {
+        RequestManager.POST("login", JSONHandler.get_json_med_info(user_name.getText().toString(), user_email.getText().toString()));
+    }
+
     public  void  showResult(JSONObject response){
 
         try {
             user_email.setText(response.get("emailAddress").toString());
             user_name.setText(response.get("formattedName").toString());
-
-            Picasso.with(this).load(response.getString("pictureUrl"))
-                    .into(profile_picture);
-
         } catch (Exception e){
             e.printStackTrace();
         }
