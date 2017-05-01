@@ -7,7 +7,6 @@ public class JSONHandler {
 
     public static String get_json_med_info(String name, String email){
 
-
         JSONObject med_info = new JSONObject();
 
         try {
@@ -38,6 +37,7 @@ public class JSONHandler {
             info.put("tests", tests);
 
             if (clinic_cases != null) info.put("clinic_cases", clinic_cases);
+            else info.put("clinic_cases", "none");
         }catch (JSONException j){
             j.printStackTrace();
         }

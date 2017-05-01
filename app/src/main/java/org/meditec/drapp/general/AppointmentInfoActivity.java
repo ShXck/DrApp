@@ -4,14 +4,17 @@ import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,11 +29,13 @@ public class AppointmentInfoActivity extends AppCompatActivity {
     private TextView patient_text;
     private TextView date_text;
     private ListAdapter adapter;
+    private Button update_button;
 
     private String symptoms;
     private String clinic_cases;
     private String tests;
     private String medication;
+    private String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +47,7 @@ public class AppointmentInfoActivity extends AppCompatActivity {
         management_list = (ListView)findViewById(R.id.managament_list);
         patient_text = (TextView)findViewById(R.id.patient_label);
         date_text = (TextView)findViewById(R.id.date_label);
+        update_button = (Button)findViewById(R.id.update_button);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, options);
         management_list.setAdapter(adapter);
 
@@ -55,6 +61,7 @@ public class AppointmentInfoActivity extends AppCompatActivity {
         JSONObject info = JSONHandler.parse(RequestManager.GET_REQUEST_DATA());
         try {
             patient_text.setText("Paciente: " + info.getString("patient"));
+            name = info.getString("patient");
             date_text.setText("Fecha: " + info.getString("day") + "/" + info.getString("month") + "/" + info.getString("year"));
         } catch (JSONException e) {
             e.printStackTrace();
@@ -66,6 +73,14 @@ public class AppointmentInfoActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 show_dialog(position);
+            }
+        });
+
+        update_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                send_updated_info();
+                Toast.makeText(getApplicationContext(), "La información ha sido actualizada", Toast.LENGTH_SHORT);
             }
         });
     }
@@ -106,8 +121,14 @@ public class AppointmentInfoActivity extends AppCompatActivity {
                 tests = text_field.getText().toString();
                 break;
             case 3:
-                //TODO: Create activity to visualize the clinic cases in the server.
+                clinic_cases = "";
                 break;
         }
+    }
+
+    private void send_updated_info(){
+        Log.d("Path", String.valueOf(HomePageActivity.identifier) + "/appointments/" + name);
+        Log.i("Info", JSONHandler.get_appointment_info(symptoms, medication, tests, clinic_cases));
+        RequestManager.PUT(String.valueOf(HomePageActivity.identifier) + "/appointments/" + name, JSONHandler.get_appointment_info(symptoms, medication, tests, clinic_cases));
     }
 }
