@@ -20,7 +20,9 @@
         <activity android:name=".general.HomePageActivity" />
         <activity android:name=".general.MainMenuActivity" />
         <activity android:name=".general.AppointmentsActivity" />
-        <activity android:name=".general.AppointmentInfoActivity"></activity>
+        <activity android:name=".general.AppointmentInfoActivity" />
+        <activity android:name=".general.CasesManagementActivity" />
+        <activity android:name=".general.MedicTestsActivity"></activity>
     </application>
 
 </manifest>

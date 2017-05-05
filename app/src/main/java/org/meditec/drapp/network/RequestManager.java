@@ -52,6 +52,40 @@ public class RequestManager {
         }
     }
 
+    public static void DELETE(String parameter, String data){
+
+        String URL =  "http://192.168.1.6:7500/MediTECServer/meditec/medics/" + parameter;
+
+        try{
+            MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
+            RequestBody body = RequestBody.create(JSON, data);
+            final Request request = new Request.Builder()
+                    .url(URL)
+                    .delete(body)
+                    .build();
+
+            Call call = client.newCall(request);
+
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e("Error", "request ->" + call);
+                    e.printStackTrace();
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    SAVE_RESPONSE_DATA(response.body().string());
+                    Log.i("Response", GET_REQUEST_DATA());
+                }
+            });
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public static void GET(String parameter){
 
         String URL =  "http://192.168.1.6:7500/MediTECServer/meditec/medics/" + parameter;

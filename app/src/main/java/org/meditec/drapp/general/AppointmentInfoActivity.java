@@ -35,14 +35,15 @@ public class AppointmentInfoActivity extends AppCompatActivity {
     private String clinic_cases;
     private String tests;
     private String medication;
-    private String name;
+    private String patient_name;
+    private String case_name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appointment_info);
 
-        String[] options = {"Editar síntomas", "Editar medicación", "Editar exámenes", "Seleccionar casos existentes"};
+        String[] options = {"Editar síntomas", "Editar medicación", "Editar exámenes", "Seleccionar casos existentes", "Nombrar caso"};
         check_box = (CheckBox) findViewById(R.id.done_button);
         management_list = (ListView)findViewById(R.id.managament_list);
         patient_text = (TextView)findViewById(R.id.patient_label);
@@ -61,7 +62,7 @@ public class AppointmentInfoActivity extends AppCompatActivity {
         JSONObject info = JSONHandler.parse(RequestManager.GET_REQUEST_DATA());
         try {
             patient_text.setText("Paciente: " + info.getString("patient"));
-            name = info.getString("patient");
+            patient_name = info.getString("patient");
             date_text.setText("Fecha: " + info.getString("day") + "/" + info.getString("month") + "/" + info.getString("year"));
         } catch (JSONException e) {
             e.printStackTrace();
@@ -123,12 +124,14 @@ public class AppointmentInfoActivity extends AppCompatActivity {
             case 3:
                 clinic_cases = "";
                 break;
+            case 4:
+                case_name = text_field.getText().toString();
         }
     }
 
     private void send_updated_info(){
-        Log.d("Path", String.valueOf(HomePageActivity.identifier) + "/appointments/" + name);
-        Log.i("Info", JSONHandler.get_appointment_info(symptoms, medication, tests, clinic_cases));
-        RequestManager.PUT(String.valueOf(HomePageActivity.identifier) + "/appointments/" + name, JSONHandler.get_appointment_info(symptoms, medication, tests, clinic_cases));
+        Log.d("Path", String.valueOf(HomePageActivity.identifier) + "/appointments/" + patient_name);
+        Log.i("Info", JSONHandler.get_appointment_info(symptoms, medication, tests, clinic_cases, case_name));
+        RequestManager.PUT(String.valueOf(HomePageActivity.identifier) + "/appointments/" + patient_name, JSONHandler.get_appointment_info(symptoms, medication, tests, clinic_cases, case_name));
     }
 }

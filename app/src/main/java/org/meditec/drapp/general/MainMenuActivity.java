@@ -47,8 +47,14 @@ public class MainMenuActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (position == 4){
-                    Intent appoinments = new Intent(MainMenuActivity.this , AppointmentsActivity.class);
-                    startActivity(appoinments);
+                    Intent appointments = new Intent(MainMenuActivity.this , AppointmentsActivity.class);
+                    startActivity(appointments);
+                }else if (position == 0){
+                    Intent clinic_cases_management = new Intent(MainMenuActivity.this, CasesManagementActivity.class);
+                    startActivity(clinic_cases_management);
+                }else if (position == 1){
+                    Intent tests = new Intent(MainMenuActivity.this, MedicTestsActivity.class);
+                    startActivity(tests);
                 }
             }
         });

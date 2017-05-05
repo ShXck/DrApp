@@ -58,7 +58,7 @@ public class AppointmentsActivity extends AppCompatActivity {
         Intent appointment_info = new Intent(this, AppointmentInfoActivity.class);
         startActivity(appointment_info);
     }
-
+    //TODO: En caso de no haber citas la respuesta es {count:1}, arreglar de modo que no salte la excepcion.
     private void process_list(String list) {
         try{
             JSONObject json = new JSONObject(list);
