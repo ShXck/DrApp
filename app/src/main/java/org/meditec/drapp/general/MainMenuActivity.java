@@ -55,6 +55,9 @@ public class MainMenuActivity extends AppCompatActivity {
                 }else if (position == 1){
                     Intent tests = new Intent(MainMenuActivity.this, MedicTestsActivity.class);
                     startActivity(tests);
+                }else if (position == 2){
+                    Intent medication = new Intent(MainMenuActivity.this, MedicationManagementActivity.class);
+                    startActivity(medication);
                 }
             }
         });

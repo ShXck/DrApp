@@ -46,7 +46,7 @@ public class CasesManagementActivity extends AppCompatActivity {
 
         get_cases();
 
-        name_field = (EditText)findViewById(R.id.name_field);
+        name_field = (EditText)findViewById(R.id.name);
         medication_field = (EditText)findViewById(R.id.medication_field);
         tests_field = (EditText)findViewById(R.id.tests_field);
         cases_list = (ListView)findViewById(R.id.cases_list);

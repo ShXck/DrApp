@@ -79,4 +79,15 @@ public class JSONHandler {
         }
         return details;
     }
+
+    public static String build_new_test(String name, String cost){
+        JSONObject test = new JSONObject();
+        try {
+            test.put("name", name);
+            test.put("cost",cost);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        return test.toString();
+    }
 }
