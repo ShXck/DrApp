@@ -23,7 +23,7 @@
         <activity android:name=".general.AppointmentInfoActivity" />
         <activity android:name=".general.CasesManagementActivity" />
         <activity android:name=".general.MedicTestsActivity" />
-        <activity android:name=".general.MedicationManagementActivity"></activity>
+        <activity android:name=".general.MedicationManagementActivity" />
     </application>
 
 </manifest>

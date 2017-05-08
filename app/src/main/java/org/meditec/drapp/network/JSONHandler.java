@@ -30,17 +30,16 @@ public class JSONHandler {
         return null;
     }
 
-    public static String get_appointment_info(String symptoms, String medication, String tests, String clinic_cases, String case_name){
+    public static String get_appointment_info(String symptoms, String medication, String tests, String clinic_cases){
 
         JSONObject info = new JSONObject();
         try {
             info.put("symptoms", symptoms);
             info.put("medication", medication);
             info.put("tests", tests);
-            info.put("name", case_name);
 
-            if (clinic_cases != null) info.put("clinic_cases", clinic_cases);
-            else info.put("clinic_cases", "none");
+            if (clinic_cases != null) info.put("cases", clinic_cases);
+            else info.put("cases", "none");
         }catch (JSONException j){
             j.printStackTrace();
         }

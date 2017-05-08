@@ -32,18 +32,19 @@ public class AppointmentInfoActivity extends AppCompatActivity {
     private Button update_button;
 
     private String symptoms;
-    private String clinic_cases;
+    private String clinic_case;
     private String tests;
     private String medication;
     private String patient_name;
-    private String case_name;
+
+    private ArrayAdapter<String> dialog_list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appointment_info);
 
-        String[] options = {"Editar síntomas", "Editar medicación", "Editar exámenes", "Seleccionar casos existentes", "Nombrar caso"};
+        String[] options = {"Editar síntomas", "Editar medicación", "Editar exámenes", "Seleccionar casos existentes"};
         check_box = (CheckBox) findViewById(R.id.done_button);
         management_list = (ListView)findViewById(R.id.managament_list);
         patient_text = (TextView)findViewById(R.id.patient_label);
@@ -51,9 +52,10 @@ public class AppointmentInfoActivity extends AppCompatActivity {
         update_button = (Button)findViewById(R.id.update_button);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, options);
         management_list.setAdapter(adapter);
-
+        dialog_list = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+        clinic_case = "";
         set_ui();
-
+        get_cases_list();
         get_option_clicked();
 
     }
@@ -73,7 +75,11 @@ public class AppointmentInfoActivity extends AppCompatActivity {
         management_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                show_dialog(position);
+                if (position <= 2) {
+                    show_dialog(position, (String)parent.getItemAtPosition(position));
+                }else {
+                    show_cases_list_dialog();
+                }
             }
         });
 
@@ -86,11 +92,11 @@ public class AppointmentInfoActivity extends AppCompatActivity {
         });
     }
 
-    private void show_dialog(final int position){
+    private void show_dialog(final int position, String option){
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-        dialog.setTitle("Gestión de cita");
+        dialog.setTitle(option);
         dialog.setMessage("Introduce el contenido, si son varias especificaciones sepárelos por coma.");
 
         final EditText edit_text = new EditText(this);
@@ -121,17 +127,61 @@ public class AppointmentInfoActivity extends AppCompatActivity {
             case 2:
                 tests = text_field.getText().toString();
                 break;
-            case 3:
-                clinic_cases = "";
-                break;
-            case 4:
-                case_name = text_field.getText().toString();
         }
+    }
+
+    private void show_cases_list_dialog(){
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Caso Clínico");
+        dialog.setMessage("Elige un caso clínico");
+
+        final ListView cases = new ListView(this);
+        cases.setAdapter(dialog_list);
+        dialog.setView(cases);
+
+        dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        cases.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String selected = (String)parent.getItemAtPosition(position);
+                if (clinic_case.equals("")){
+                    clinic_case += selected;
+                }else {
+                    clinic_case += "," + selected;
+                }
+            }
+        });
+        dialog.show();
+    }
+
+    private void populate_adapter(String list) {
+        try {
+            JSONObject cases_list = new JSONObject(list);
+            for (int i = 0; i < cases_list.getInt("count"); i++){
+                dialog_list.add(cases_list.getString(String.valueOf(i + 1)));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void get_cases_list(){
+        RequestManager.GET("cases");
+        RequestManager.wait_for_response(500);
+        populate_adapter(RequestManager.GET_REQUEST_DATA());
     }
 
     private void send_updated_info(){
         Log.d("Path", String.valueOf(HomePageActivity.identifier) + "/appointments/" + patient_name);
-        Log.i("Info", JSONHandler.get_appointment_info(symptoms, medication, tests, clinic_cases, case_name));
-        RequestManager.PUT(String.valueOf(HomePageActivity.identifier) + "/appointments/" + patient_name, JSONHandler.get_appointment_info(symptoms, medication, tests, clinic_cases, case_name));
+        Log.i("Info", JSONHandler.get_appointment_info(symptoms, medication, tests, clinic_case));
+        RequestManager.PUT(String.valueOf(HomePageActivity.identifier) + "/appointments/" + patient_name, JSONHandler.get_appointment_info(symptoms, medication, tests, clinic_case));
     }
 }

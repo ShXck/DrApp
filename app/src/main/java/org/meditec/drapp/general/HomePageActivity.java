@@ -37,7 +37,7 @@ public class HomePageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
         progress= new ProgressDialog(this);
-        progress.setMessage("Retrieving data...");
+        progress.setMessage("Recuperando información");
         progress.setCanceledOnTouchOutside(false);
         progress.show();
 
