@@ -1,6 +1,7 @@
 package org.meditec.drapp.general;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,6 +16,8 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.Request;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,10 +60,10 @@ public class AppointmentInfoActivity extends AppCompatActivity {
         set_ui();
         get_cases_list();
         get_option_clicked();
-
     }
 
     private void set_ui() {
+        RequestManager.wait_for_response(500);
         JSONObject info = JSONHandler.parse(RequestManager.GET_REQUEST_DATA());
         try {
             patient_text.setText("Paciente: " + info.getString("patient"));
@@ -88,6 +91,18 @@ public class AppointmentInfoActivity extends AppCompatActivity {
             public void onClick(View v) {
                 send_updated_info();
                 Toast.makeText(getApplicationContext(), "La información ha sido actualizada", Toast.LENGTH_SHORT);
+            }
+        });
+
+        check_box.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (((CheckBox)v).isChecked()){
+                    Toast.makeText(getApplicationContext(), "Has terminado la cita", Toast.LENGTH_SHORT);
+                    RequestManager.DELETE(HomePageActivity.identifier + "/appointments/" + patient_name, "");
+                    Intent menu = new Intent(AppointmentInfoActivity.this, MainMenuActivity.class);
+                    startActivity(menu);
+                }
             }
         });
     }

@@ -24,6 +24,7 @@
         <activity android:name=".general.CasesManagementActivity" />
         <activity android:name=".general.MedicTestsActivity" />
         <activity android:name=".general.MedicationManagementActivity" />
+        <activity android:name=".general.FeedbackActivity"></activity>
     </application>
 
 </manifest>
