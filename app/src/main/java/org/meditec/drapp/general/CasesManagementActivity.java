@@ -30,11 +30,9 @@ public class CasesManagementActivity extends AppCompatActivity {
     private EditText name_field;
     private EditText medication_field;
     private EditText tests_field;
-    private ListAdapter adapter;
+    private ArrayAdapter adapter;
     private ListView cases_list;
     private Button create_button;
-    private ArrayList<String> cases = new ArrayList<>();
-
     private String medication_detail;
     private String tests_detail;
     private String price_detail;
@@ -44,16 +42,14 @@ public class CasesManagementActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cases_management);
 
-        get_cases();
-
         name_field = (EditText)findViewById(R.id.name);
         medication_field = (EditText)findViewById(R.id.medication_field);
         tests_field = (EditText)findViewById(R.id.tests_field);
         cases_list = (ListView)findViewById(R.id.cases_list);
         create_button = (Button)findViewById(R.id.create_button);
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, cases);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
         cases_list.setAdapter(adapter);
-
+        get_cases();
         get_click();
     }
 
@@ -201,7 +197,7 @@ public class CasesManagementActivity extends AppCompatActivity {
             JSONObject list = new JSONObject(json_list);
 
             for (int i = 0; i < list.getInt("count"); i++){
-                cases.add(list.getString(String.valueOf(i + 1)));
+                adapter.add(list.getString(String.valueOf(i + 1)));
             }
         } catch (JSONException e) {
             e.printStackTrace();

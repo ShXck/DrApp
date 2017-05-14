@@ -7,7 +7,7 @@ import java.util.Random;
 
 public class JSONHandler {
 
-    public static String get_json_med_info(String name, String email){
+    public static String build_json_med_info(String name, String email){
 
         JSONObject med_info = new JSONObject();
 
@@ -30,7 +30,7 @@ public class JSONHandler {
         return null;
     }
 
-    public static String get_appointment_info(String symptoms, String medication, String tests, String clinic_cases){
+    public static String build_appointment_info(String symptoms, String medication, String tests, String clinic_cases){
 
         JSONObject info = new JSONObject();
         try {

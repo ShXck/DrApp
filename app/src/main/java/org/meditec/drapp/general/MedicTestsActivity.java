@@ -26,8 +26,9 @@ import java.util.ArrayList;
 
 public class MedicTestsActivity extends AppCompatActivity {
 
-    private ListAdapter adapter;
-    private ArrayList<String> tests_list = new ArrayList<>();
+    private ArrayAdapter adapter;
+    //TODO: usar adapter
+    //private ArrayList<String> tests_list = new ArrayList<>();
 
     private ListView list_view_tests;
     private EditText name_field;
@@ -42,16 +43,16 @@ public class MedicTestsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_medic_tests);
 
-        tests_list.clear();
-        get_tests();
+        //adapter.clear();
+        //tests_list.clear();
 
         list_view_tests = (ListView)findViewById(R.id.tests_list);
         name_field = (EditText)findViewById(R.id.name);
         price_field = (EditText)findViewById(R.id.price_field);
         create_button = (Button)findViewById(R.id.create_button);
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, tests_list);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
         list_view_tests.setAdapter(adapter);
-
+        get_tests();
         get_click();
     }
 
@@ -196,7 +197,7 @@ public class MedicTestsActivity extends AppCompatActivity {
             JSONObject list = new JSONObject(json_list);
 
             for (int i = 0; i < list.getInt("count"); i++){
-                tests_list.add(list.getString(String.valueOf(i + 1)));
+                adapter.add(list.getString(String.valueOf(i + 1)));
             }
         } catch (JSONException e) {
             e.printStackTrace();

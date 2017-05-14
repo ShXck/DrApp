@@ -17,8 +17,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.meditec.drapp.R;
@@ -91,6 +89,9 @@ public class AppointmentInfoActivity extends AppCompatActivity {
             public void onClick(View v) {
                 send_updated_info();
                 Toast.makeText(getApplicationContext(), "La información ha sido actualizada", Toast.LENGTH_SHORT);
+
+                Intent menu = new Intent(AppointmentInfoActivity.this, MainMenuActivity.class);
+                startActivity(menu);
             }
         });
 
@@ -196,7 +197,7 @@ public class AppointmentInfoActivity extends AppCompatActivity {
 
     private void send_updated_info(){
         Log.d("Path", String.valueOf(HomePageActivity.identifier) + "/appointments/" + patient_name);
-        Log.i("Info", JSONHandler.get_appointment_info(symptoms, medication, tests, clinic_case));
-        RequestManager.PUT(String.valueOf(HomePageActivity.identifier) + "/appointments/" + patient_name, JSONHandler.get_appointment_info(symptoms, medication, tests, clinic_case));
+        Log.i("Info", JSONHandler.build_appointment_info(symptoms, medication, tests, clinic_case));
+        RequestManager.PUT(String.valueOf(HomePageActivity.identifier) + "/appointments/" + patient_name, JSONHandler.build_appointment_info(symptoms, medication, tests, clinic_case));
     }
 }

@@ -27,9 +27,8 @@ import java.util.ArrayList;
 public class MedicationManagementActivity extends AppCompatActivity {
 
     private Button create_button;
-    private ListAdapter adapter;
+    private ArrayAdapter adapter;
     private ListView medication_list;
-    private ArrayList<String> names = new ArrayList<>();
     private EditText name_field;
     private EditText price_field;
 
@@ -41,16 +40,13 @@ public class MedicationManagementActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_medication_management);
 
-        names.clear();
-        get_medication_list();
-
         create_button = (Button) findViewById(R.id.button);
         medication_list = (ListView)findViewById(R.id.medication_list);
         name_field = (EditText)findViewById(R.id.name);
         price_field = (EditText)findViewById(R.id.cost);
-        adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1, names);
+        adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1);
         medication_list.setAdapter(adapter);
-
+        get_medication_list();
         get_click();
     }
 
@@ -60,6 +56,7 @@ public class MedicationManagementActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 RequestManager.POST("medication/new_medication", JSONHandler.build_new_test(name_field.getText().toString(), price_field.getText().toString()));
+                clear_fields();
             }
         });
 
@@ -185,11 +182,16 @@ public class MedicationManagementActivity extends AppCompatActivity {
             JSONObject json_list = new JSONObject(list);
 
             for (int i = 0; i < json_list.getInt("count"); i++){
-                names.add(json_list.getString(String.valueOf(i + 1)));
+                adapter.add(json_list.getString(String.valueOf(i + 1)));
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    private void clear_fields(){
+        name_field.getText().clear();
+        price_field.getText().clear();
     }
 
 }

@@ -19,8 +19,7 @@ import java.util.ArrayList;
 
 public class AppointmentsActivity extends AppCompatActivity {
 
-    private ListAdapter adapter;
-    private ArrayList<String> appointments = new ArrayList<>();
+    private ArrayAdapter adapter;
     private ListView appointment_list;
 
     @Override
@@ -28,12 +27,11 @@ public class AppointmentsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appointments);
 
-        get_agenda();
-
         appointment_list = (ListView)findViewById(R.id.appointment_list);
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, appointments);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
         appointment_list.setAdapter(adapter);
 
+        get_agenda();
         get_selected_appointment();
     }
 
@@ -64,7 +62,7 @@ public class AppointmentsActivity extends AppCompatActivity {
             JSONObject json = new JSONObject(list);
 
             for (int i = 0; i < json.getInt("count"); i++){
-                appointments.add(json.getString(String.valueOf(i + 1)));
+                adapter.add(json.getString(String.valueOf(i + 1)));
             }
         }catch (JSONException j){
             j.printStackTrace();

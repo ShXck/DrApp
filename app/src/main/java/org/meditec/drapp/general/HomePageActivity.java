@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -84,7 +83,7 @@ public class HomePageActivity extends AppCompatActivity {
     }
 
     private void login() {
-        RequestManager.POST("login", JSONHandler.get_json_med_info(user_name.getText().toString(), user_email.getText().toString()));
+        RequestManager.POST("login", JSONHandler.build_json_med_info(user_name.getText().toString(), user_email.getText().toString()));
     }
 
     public  void  showResult(JSONObject response){
