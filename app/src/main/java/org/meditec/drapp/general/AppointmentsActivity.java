@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.meditec.drapp.R;
@@ -35,6 +36,9 @@ public class AppointmentsActivity extends AppCompatActivity {
         get_selected_appointment();
     }
 
+    /**
+     * listener del butón.
+     */
     private void get_selected_appointment() {
         appointment_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -45,24 +49,37 @@ public class AppointmentsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Petición para obtener la agenda.
+     */
     private void get_agenda() {
         RequestManager.GET(String.valueOf(HomePageActivity.identifier) + "/appointments");
-        RequestManager.wait_for_response(500);
+        RequestManager.wait_for_response(1000);
         process_list(RequestManager.GET_REQUEST_DATA());
     }
 
+    /**
+     * Petición para obtener una cita especifica.
+     * @param appointment la cita a buscar.
+     */
     private void get_appointment(String appointment){
         RequestManager.GET(String.valueOf(HomePageActivity.identifier) + "/appointments/" + appointment);
         Intent appointment_info = new Intent(this, AppointmentInfoActivity.class);
+        appointment_info.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(appointment_info);
     }
-    //TODO: En caso de no haber citas la respuesta es {count:1}, arreglar de modo que no salte la excepcion.
+
+    /**
+     * Procesa la lista de citas.
+     * @param list la lista a procesar.
+     */
     private void process_list(String list) {
         try{
             JSONObject json = new JSONObject(list);
+            JSONArray array = json.getJSONArray("appointments");
 
-            for (int i = 0; i < json.getInt("count"); i++){
-                adapter.add(json.getString(String.valueOf(i + 1)));
+            for (int i = 0; i < array.length(); i++){
+                adapter.add(array.get(i));
             }
         }catch (JSONException j){
             j.printStackTrace();

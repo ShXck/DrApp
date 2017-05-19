@@ -10,7 +10,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Redhead">
-        <activity android:name=".general.LoginActivity">
+        <activity android:name=".general.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,11 +20,22 @@
         <activity android:name=".general.HomePageActivity" />
         <activity android:name=".general.MainMenuActivity" />
         <activity android:name=".general.AppointmentsActivity" />
-        <activity android:name=".general.AppointmentInfoActivity" />
-        <activity android:name=".general.CasesManagementActivity" />
-        <activity android:name=".general.MedicTestsActivity" />
-        <activity android:name=".general.MedicationManagementActivity" />
-        <activity android:name=".general.FeedbackActivity"></activity>
+        <activity
+            android:name=".general.AppointmentInfoActivity"
+            android:windowSoftInputMode="stateVisible|adjustPan"/>
+        <activity
+            android:name=".general.CasesManagementActivity"
+            android:windowSoftInputMode="stateVisible|adjustPan"/>
+        <activity
+            android:name=".general.MedicTestsActivity"/>
+        <activity
+            android:name=".general.MedicationManagementActivity"
+            android:windowSoftInputMode="stateVisible|adjustPan"/>
+        <activity android:name=".general.FeedbackActivity" />
+        <activity
+            android:name=".general.ChatActivity"
+            android:windowSoftInputMode="stateVisible|adjustPan"/>
+        <activity android:name=".general.LoginActivity"></activity>
     </application>
 
 </manifest>

@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.meditec.drapp.R;
@@ -50,6 +51,9 @@ public class MedicationManagementActivity extends AppCompatActivity {
         get_click();
     }
 
+    /**
+     * listener del boton crear.
+     */
     private void get_click() {
 
         create_button.setOnClickListener(new View.OnClickListener() {
@@ -86,6 +90,10 @@ public class MedicationManagementActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * muestra una advertencia.
+     * @param medication_name el nombre del medicamento.
+     */
     private void show_delete_dialog(final String medication_name){
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
@@ -107,6 +115,10 @@ public class MedicationManagementActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     * muestra el dialogo para editar las propiedades de un medicamento.
+     * @param medication_name el nombre del medicamento.
+     */
     private void show_edit_dialog(final String medication_name){
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -143,6 +155,10 @@ public class MedicationManagementActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     * muestra la informacion del medicamento seleccionado.
+     * @param medication_name el nombre del medicamento.
+     */
     private void show_overview_dialog(final String medication_name){
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -159,9 +175,13 @@ public class MedicationManagementActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     * Petición para obtener la información de un medicamento.
+     * @param medication_name
+     */
     private void get_medication_details(String medication_name){
         RequestManager.GET("medication/" + medication_name);
-        RequestManager.wait_for_response(500);
+        RequestManager.wait_for_response(1000);
         JSONObject json_med = JSONHandler.parse(RequestManager.GET_REQUEST_DATA());
         try {
             name_detail = json_med.getString("name");
@@ -171,24 +191,35 @@ public class MedicationManagementActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Petición para obtener la lista completa de medicamentos.
+     */
     private void get_medication_list() {
         RequestManager.GET("medication");
-        RequestManager.wait_for_response(500);
+        RequestManager.wait_for_response(1000);
         process_list(RequestManager.GET_REQUEST_DATA());
     }
 
+    /**
+     * procesa la lista de medicamentos.
+     * @param list la lista en json.
+     */
     private void process_list(String list) {
         try {
             JSONObject json_list = new JSONObject(list);
+            JSONArray array = json_list.getJSONArray("medication");
 
-            for (int i = 0; i < json_list.getInt("count"); i++){
-                adapter.add(json_list.getString(String.valueOf(i + 1)));
+            for (int i = 0; i < array.length(); i++){
+                adapter.add(array.get(i));
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * limpia los espacios de texto.
+     */
     private void clear_fields(){
         name_field.getText().clear();
         price_field.getText().clear();

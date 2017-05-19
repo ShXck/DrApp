@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.meditec.drapp.R;
@@ -27,9 +28,6 @@ import java.util.ArrayList;
 public class MedicTestsActivity extends AppCompatActivity {
 
     private ArrayAdapter adapter;
-    //TODO: usar adapter
-    //private ArrayList<String> tests_list = new ArrayList<>();
-
     private ListView list_view_tests;
     private EditText name_field;
     private EditText price_field;
@@ -56,6 +54,9 @@ public class MedicTestsActivity extends AppCompatActivity {
         get_click();
     }
 
+    /**
+     * listener de l¿los botones.
+     */
     private void get_click() {
         create_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,9 +92,13 @@ public class MedicTestsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Petición para obtener los detalles de un examen.
+     * @param test_name el nombre del exmamen.
+     */
     private void get_test_details(String test_name) {
         RequestManager.GET("tests/" + test_name);
-        RequestManager.wait_for_response(500);
+        RequestManager.wait_for_response(1000);
         JSONObject json_info = JSONHandler.parse(RequestManager.GET_REQUEST_DATA());
         try {
             name_detail = json_info.getString("name");
@@ -104,6 +109,10 @@ public class MedicTestsActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * muestra una advertencia
+     * @param test_name el nombre del examen.
+     */
     private void show_delete_dialog(final String test_name){
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
@@ -125,6 +134,10 @@ public class MedicTestsActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     * Muestra el dialogo para editar las propiedades del exámen.
+     * @param test_name el nombre del exámen.
+     */
     private void show_edit_dialog(final String test_name){
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -161,6 +174,10 @@ public class MedicTestsActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     * Muestra la información del exámen en un dialogo.
+     * @param test_name el nombre del exámen.
+     */
     private void show_overview_dialog(final String test_name){
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -177,27 +194,41 @@ public class MedicTestsActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     * Petición para obtener la lista de exámenes.
+     */
     private void get_tests() {
         RequestManager.GET("tests");
-        RequestManager.wait_for_response(500);
+        RequestManager.wait_for_response(1000);
         process_list(RequestManager.GET_REQUEST_DATA());
     }
 
+    /**
+     * Crea un nuevo examen en el servidor.
+     */
     private void create_test(){
         RequestManager.POST("tests/new_test", JSONHandler.build_new_test(name_field.getText().toString(), price_field.getText().toString()));
     }
 
+    /**
+     * Limpia los espacios de texto.
+     */
     private void clear_fields(){
         name_field.getText().clear();
         price_field.getText().clear();
     }
 
+    /**
+     * Procesa la lista de examenes.
+     * @param json_list la lista de examenes.
+     */
     private void process_list(String json_list){
         try {
             JSONObject list = new JSONObject(json_list);
+            JSONArray array = list.getJSONArray("tests");
 
-            for (int i = 0; i < list.getInt("count"); i++){
-                adapter.add(list.getString(String.valueOf(i + 1)));
+            for (int i = 0; i < array.length(); i++){
+                adapter.add(array.get(i));
             }
         } catch (JSONException e) {
             e.printStackTrace();

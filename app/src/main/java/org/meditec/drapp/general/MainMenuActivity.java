@@ -61,6 +61,9 @@ public class MainMenuActivity extends AppCompatActivity {
                 }else if (position == 5){
                     Intent feedback = new Intent(MainMenuActivity.this, FeedbackActivity.class);
                     startActivity(feedback);
+                }else if (position == 3){
+                    Intent chat = new Intent(MainMenuActivity.this, ChatActivity.class);
+                    startActivity(chat);
                 }
             }
         });

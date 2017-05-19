@@ -22,10 +22,18 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
     }
 
+    /**
+     * Establece los permisos de información.
+     * @return el scope.
+     */
     private static Scope buildScope(){
         return Scope.build(Scope.R_BASICPROFILE, Scope.R_EMAILADDRESS);
     }
 
+    /**
+     * Controla el login.
+     * @param view
+     */
     public void login(View view){
         LISessionManager.getInstance(getApplicationContext())
                 .init(this, buildScope(), new AuthListener() {

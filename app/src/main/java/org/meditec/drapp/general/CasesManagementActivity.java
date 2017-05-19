@@ -16,7 +16,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.meditec.drapp.R;
@@ -97,6 +99,7 @@ public class CasesManagementActivity extends AppCompatActivity {
         dialog.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(getApplicationContext(), case_name + " eliminado", Toast.LENGTH_SHORT).show();
                 RequestManager.DELETE("cases/" + case_name, "{}");
             }
         });
@@ -133,6 +136,7 @@ public class CasesManagementActivity extends AppCompatActivity {
         dialog.setPositiveButton("Editar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(getApplicationContext(), case_name + " editado", Toast.LENGTH_SHORT).show();
                 RequestManager.PUT("cases/" + case_name, JSONHandler.build_json_case(case_name, medication_field.getText().toString(), tests_field.getText().toString()));
             }
         });
@@ -169,19 +173,20 @@ public class CasesManagementActivity extends AppCompatActivity {
     }
 
     private void send_new_case_info(){
+        Toast.makeText(getApplicationContext(), "Nuevo caso creado", Toast.LENGTH_SHORT).show();
         RequestManager.POST("cases/new_case", JSONHandler.build_json_case(name_field.getText().toString(), medication_field.getText().toString(), tests_field.getText().toString()));
     }
 
     private void get_cases() {
         RequestManager.GET("cases");
-        RequestManager.wait_for_response(500);
+        RequestManager.wait_for_response(1000);
         process_list(RequestManager.GET_REQUEST_DATA());
     }
 
     private void get_case_details(String case_name){
         Log.d("PATH", "/cases/" + case_name);
         RequestManager.GET("cases/" + case_name);
-        RequestManager.wait_for_response(500);
+        RequestManager.wait_for_response(1000);
         JSONObject json_detail = JSONHandler.parse_clinic_case_details(RequestManager.GET_REQUEST_DATA());
         try {
             medication_detail = json_detail.getString("medication");
@@ -195,9 +200,10 @@ public class CasesManagementActivity extends AppCompatActivity {
     private void process_list(String json_list){
         try {
             JSONObject list = new JSONObject(json_list);
+            JSONArray array = list.getJSONArray("cases");
 
-            for (int i = 0; i < list.getInt("count"); i++){
-                adapter.add(list.getString(String.valueOf(i + 1)));
+            for (int i = 0; i < array.length(); i++){
+                adapter.add(array.get(i));
             }
         } catch (JSONException e) {
             e.printStackTrace();

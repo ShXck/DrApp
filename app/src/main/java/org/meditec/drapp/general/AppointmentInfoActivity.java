@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.meditec.drapp.R;
@@ -29,7 +30,7 @@ public class AppointmentInfoActivity extends AppCompatActivity {
     private ListView management_list;
     private TextView patient_text;
     private TextView date_text;
-    private ListAdapter adapter;
+    private ArrayAdapter adapter;
     private Button update_button;
 
     private String symptoms;
@@ -54,7 +55,6 @@ public class AppointmentInfoActivity extends AppCompatActivity {
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, options);
         management_list.setAdapter(adapter);
         dialog_list = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
-        clinic_case = "";
         set_ui();
         get_cases_list();
         get_option_clicked();
@@ -87,11 +87,15 @@ public class AppointmentInfoActivity extends AppCompatActivity {
         update_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                send_updated_info();
-                Toast.makeText(getApplicationContext(), "La información ha sido actualizada", Toast.LENGTH_SHORT);
-
-                Intent menu = new Intent(AppointmentInfoActivity.this, MainMenuActivity.class);
-                startActivity(menu);
+                if (clinic_case == null){
+                    show_dialog();
+                }else {
+                    send_updated_info();
+                    Toast.makeText(getApplicationContext(), "La información ha sido actualizada", Toast.LENGTH_SHORT).show();
+                    Intent menu = new Intent(AppointmentInfoActivity.this, MainMenuActivity.class);
+                    menu.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(menu);
+                }
             }
         });
 
@@ -99,9 +103,10 @@ public class AppointmentInfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (((CheckBox)v).isChecked()){
-                    Toast.makeText(getApplicationContext(), "Has terminado la cita", Toast.LENGTH_SHORT);
+                    Toast.makeText(getApplicationContext(), "Has terminado la cita", Toast.LENGTH_SHORT).show();
                     RequestManager.DELETE(HomePageActivity.identifier + "/appointments/" + patient_name, "");
                     Intent menu = new Intent(AppointmentInfoActivity.this, MainMenuActivity.class);
+                    menu.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(menu);
                 }
             }
@@ -146,6 +151,21 @@ public class AppointmentInfoActivity extends AppCompatActivity {
         }
     }
 
+    private void show_dialog(){
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Acción inválida");
+        dialog.setMessage("Tienes que seleccionar un caso clínico primero.");
+        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
     private void show_cases_list_dialog(){
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -168,8 +188,8 @@ public class AppointmentInfoActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String selected = (String)parent.getItemAtPosition(position);
-                if (clinic_case.equals("")){
-                    clinic_case += selected;
+                if (clinic_case == null){
+                    clinic_case = selected;
                 }else {
                     clinic_case += "," + selected;
                 }
@@ -181,8 +201,10 @@ public class AppointmentInfoActivity extends AppCompatActivity {
     private void populate_adapter(String list) {
         try {
             JSONObject cases_list = new JSONObject(list);
-            for (int i = 0; i < cases_list.getInt("count"); i++){
-                dialog_list.add(cases_list.getString(String.valueOf(i + 1)));
+            JSONArray array = cases_list.getJSONArray("cases");
+
+            for (int i = 0; i < array.length(); i++){
+                dialog_list.add((String) array.get(i));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -191,7 +213,7 @@ public class AppointmentInfoActivity extends AppCompatActivity {
 
     private void get_cases_list(){
         RequestManager.GET("cases");
-        RequestManager.wait_for_response(500);
+        RequestManager.wait_for_response(1000);
         populate_adapter(RequestManager.GET_REQUEST_DATA());
     }
 

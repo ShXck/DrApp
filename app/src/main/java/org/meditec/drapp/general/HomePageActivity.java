@@ -55,11 +55,18 @@ public class HomePageActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * obtiene la pantalla del menú.
+     */
     private void get_main_menu_screen() {
         Intent main_menu = new Intent(HomePageActivity.this, MainMenuActivity.class);
+        main_menu.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(main_menu);
     }
 
+    /**
+     * Controla las acciones según el resultado del login.
+     */
     public void linkedInApiHelper(){
         APIHelper apiHelper = APIHelper.getInstance(getApplicationContext());
         apiHelper.getRequest(HomePageActivity.this, url, new ApiListener() {
@@ -82,10 +89,17 @@ public class HomePageActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Crea el usuario en el servidor.
+     */
     private void login() {
         RequestManager.POST("login", JSONHandler.build_json_med_info(user_name.getText().toString(), user_email.getText().toString()));
     }
 
+    /**
+     * Obtiene información del usuario.
+     * @param response
+     */
     public  void  showResult(JSONObject response){
 
         try {

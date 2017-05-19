@@ -29,12 +29,19 @@ public class FeedbackActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Petición para obtener los comentarios.
+     */
     private void get_comments() {
         RequestManager.GET(HomePageActivity.identifier + "/feedback");
-        RequestManager.wait_for_response(500);
+        RequestManager.wait_for_response(1000);
         process_list(RequestManager.GET_REQUEST_DATA());
     }
 
+    /**
+     * procesa la lista de comentarios.
+     * @param comments la lista en json de comentarios.
+     */
     private void process_list(String comments){
 
         try {
