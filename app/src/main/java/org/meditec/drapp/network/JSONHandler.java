@@ -42,23 +42,16 @@ public class JSONHandler {
 
     /**
      * Construye un json con información de cita.
-     * @param symptoms los sintomas.
      * @param medication el tratamiento.
      * @param tests los exámenes.
      * @param clinic_cases los casos clinicos.
      * @return el json con la información de la cita.
      */
-    public static String build_appointment_info(String symptoms, String medication, String tests, String clinic_cases){
-
-        System.out.println(tests);
-        System.out.println(medication);
+    public static String build_appointment_info(String medication, String tests, String clinic_cases){
 
         JSONObject info = new JSONObject();
         String message = "none";
         try {
-            if(symptoms != null) info.put("symptoms", symptoms);
-            else info.put("symptoms", message);
-
             if (medication != null) info.put("medication", medication);
             else info.put("medication",message);
 

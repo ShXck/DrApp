@@ -2,6 +2,7 @@ package org.meditec.drapp.general;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -61,6 +63,8 @@ public class MedicationManagementActivity extends AppCompatActivity {
             public void onClick(View v) {
                 RequestManager.POST("medication/new_medication", JSONHandler.build_new_test(name_field.getText().toString(), price_field.getText().toString()));
                 clear_fields();
+                update();
+                Toast.makeText(getApplicationContext(), "Medicamento creado", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -104,6 +108,7 @@ public class MedicationManagementActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 RequestManager.DELETE("medication/" + medication_name, "{}");
+                update();
             }
         });
         dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -144,6 +149,7 @@ public class MedicationManagementActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 RequestManager.PUT("medication/" + medication_name, JSONHandler.build_new_test(name_field.getText().toString(), cost_field.getText().toString()));
+                update();
             }
         });
         dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -223,6 +229,12 @@ public class MedicationManagementActivity extends AppCompatActivity {
     private void clear_fields(){
         name_field.getText().clear();
         price_field.getText().clear();
+    }
+
+    private void update(){
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
     }
 
 }

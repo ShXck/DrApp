@@ -2,6 +2,7 @@ package org.meditec.drapp.general;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -61,6 +62,7 @@ public class CasesManagementActivity extends AppCompatActivity {
             public void onClick(View v) {
                 send_new_case_info();
                 clear_fields();
+                Toast.makeText(getApplicationContext(), "Caso creado", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -101,6 +103,7 @@ public class CasesManagementActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 Toast.makeText(getApplicationContext(), case_name + " eliminado", Toast.LENGTH_SHORT).show();
                 RequestManager.DELETE("cases/" + case_name, "{}");
+                update();
             }
         });
         dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -138,6 +141,7 @@ public class CasesManagementActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 Toast.makeText(getApplicationContext(), case_name + " editado", Toast.LENGTH_SHORT).show();
                 RequestManager.PUT("cases/" + case_name, JSONHandler.build_json_case(case_name, medication_field.getText().toString(), tests_field.getText().toString()));
+                update();
             }
         });
         dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -175,6 +179,7 @@ public class CasesManagementActivity extends AppCompatActivity {
     private void send_new_case_info(){
         Toast.makeText(getApplicationContext(), "Nuevo caso creado", Toast.LENGTH_SHORT).show();
         RequestManager.POST("cases/new_case", JSONHandler.build_json_case(name_field.getText().toString(), medication_field.getText().toString(), tests_field.getText().toString()));
+        update();
     }
 
     private void get_cases() {
@@ -208,5 +213,11 @@ public class CasesManagementActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    private void update(){
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
     }
 }

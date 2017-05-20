@@ -55,12 +55,6 @@ public class ChatActivity extends AppCompatActivity {
         process_messages_list(RequestManager.GET_REQUEST_DATA());
     }
 
-    private void get_available_medics() {
-        RequestManager.GET("medics");
-        RequestManager.wait_for_response(1000);
-        //process_medics_list(RequestManager.GET_REQUEST_DATA());
-    }
-
     private void process_messages_list(String json_messages){
         try {
             JSONObject messages = new JSONObject(json_messages);
@@ -73,19 +67,6 @@ public class ChatActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
-   /* private void process_medics_list(String list){
-        try {
-            JSONObject medics = new JSONObject(list);
-            JSONArray array = medics.getJSONArray("medics");
-
-            for(int i = 0; i < array.length(); i++){
-                online_meds_adapter.add(array.get(i));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }*/
 
     private void update(){
         Intent intent = getIntent();

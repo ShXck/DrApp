@@ -46,7 +46,7 @@ public class AppointmentInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appointment_info);
 
-        String[] options = {"Editar síntomas", "Editar medicación", "Editar exámenes", "Seleccionar casos existentes"};
+        String[] options = {"Ver síntomas", "Editar medicación", "Editar exámenes", "Seleccionar casos existentes"};
         check_box = (CheckBox) findViewById(R.id.done_button);
         management_list = (ListView)findViewById(R.id.managament_list);
         patient_text = (TextView)findViewById(R.id.patient_label);
@@ -61,12 +61,14 @@ public class AppointmentInfoActivity extends AppCompatActivity {
     }
 
     private void set_ui() {
-        RequestManager.wait_for_response(500);
+        RequestManager.wait_for_response(1000);
         JSONObject info = JSONHandler.parse(RequestManager.GET_REQUEST_DATA());
         try {
             patient_text.setText("Paciente: " + info.getString("patient"));
             patient_name = info.getString("patient");
             date_text.setText("Fecha: " + info.getString("day") + "/" + info.getString("month") + "/" + info.getString("year"));
+            symptoms = info.getString("symptoms");
+            clinic_case = info.getString("cases");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -76,8 +78,10 @@ public class AppointmentInfoActivity extends AppCompatActivity {
         management_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position <= 2) {
+                if (position == 2 || position == 1) {
                     show_dialog(position, (String)parent.getItemAtPosition(position));
+                }else if (position == 0){
+                    show_symptoms_dialog();
                 }else {
                     show_cases_list_dialog();
                 }
@@ -87,7 +91,7 @@ public class AppointmentInfoActivity extends AppCompatActivity {
         update_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (clinic_case == null){
+                if (clinic_case == null || clinic_case.equals("")){
                     show_dialog();
                 }else {
                     send_updated_info();
@@ -137,6 +141,8 @@ public class AppointmentInfoActivity extends AppCompatActivity {
         dialog.show();
     }
 
+
+
     private void save_info(int position, EditText text_field){
         switch (position){
             case 0:
@@ -157,6 +163,21 @@ public class AppointmentInfoActivity extends AppCompatActivity {
 
         dialog.setTitle("Acción inválida");
         dialog.setMessage("Tienes que seleccionar un caso clínico primero.");
+        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    private void show_symptoms_dialog(){
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Síntomas registrados");
+        dialog.setMessage(symptoms);
         dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -191,7 +212,7 @@ public class AppointmentInfoActivity extends AppCompatActivity {
                 if (clinic_case == null){
                     clinic_case = selected;
                 }else {
-                    clinic_case += "," + selected;
+                    clinic_case += selected + ",";
                 }
             }
         });
@@ -219,7 +240,7 @@ public class AppointmentInfoActivity extends AppCompatActivity {
 
     private void send_updated_info(){
         Log.d("Path", String.valueOf(HomePageActivity.identifier) + "/appointments/" + patient_name);
-        Log.i("Info", JSONHandler.build_appointment_info(symptoms, medication, tests, clinic_case));
-        RequestManager.PUT(String.valueOf(HomePageActivity.identifier) + "/appointments/" + patient_name, JSONHandler.build_appointment_info(symptoms, medication, tests, clinic_case));
+        Log.i("Info", JSONHandler.build_appointment_info(medication, tests, clinic_case));
+        RequestManager.PUT(String.valueOf(HomePageActivity.identifier) + "/appointments/" + patient_name, JSONHandler.build_appointment_info(medication, tests, clinic_case));
     }
 }

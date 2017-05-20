@@ -2,6 +2,7 @@ package org.meditec.drapp.general;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -63,6 +65,8 @@ public class MedicTestsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 create_test();
                 clear_fields();
+                update();
+                Toast.makeText(getApplicationContext(), "Exámen creado", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -123,6 +127,7 @@ public class MedicTestsActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 RequestManager.DELETE("tests/" + test_name, "{}");
+                update();
             }
         });
         dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -163,6 +168,7 @@ public class MedicTestsActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 RequestManager.PUT("tests/" + test_name, JSONHandler.build_new_test(name_field.getText().toString(), cost_field.getText().toString()));
+                update();
             }
         });
         dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -233,5 +239,11 @@ public class MedicTestsActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    private void update(){
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
     }
 }
