@@ -38,6 +38,9 @@ public class ChatActivity extends AppCompatActivity {
         set_listener();
     }
 
+    /**
+     * Crea un nuevo mensaje en el chat.
+     */
     private void set_listener() {
         send_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,12 +52,19 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Petición para obtener la lista de mensajes.
+     */
     private void get_messages_list() {
         RequestManager.GET("chat");
         RequestManager.wait_for_response(1000);
         process_messages_list(RequestManager.GET_REQUEST_DATA());
     }
 
+    /**
+     * Procesa la lista de mensajes.
+     * @param json_messages los mensajes en json.
+     */
     private void process_messages_list(String json_messages){
         try {
             JSONObject messages = new JSONObject(json_messages);
@@ -68,6 +78,9 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Actualiza la actividad.
+     */
     private void update(){
         Intent intent = getIntent();
         finish();

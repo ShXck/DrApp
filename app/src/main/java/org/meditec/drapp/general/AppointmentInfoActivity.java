@@ -12,7 +12,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,14 +38,17 @@ public class AppointmentInfoActivity extends AppCompatActivity {
     private String medication;
     private String patient_name;
 
-    private ArrayAdapter<String> dialog_list;
+    private ArrayAdapter<String> cases_adapter;
+    private ArrayAdapter<String> tests_adapter;
+    private ArrayAdapter<String> medication_adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appointment_info);
 
-        String[] options = {"Ver síntomas", "Editar medicación", "Editar exámenes", "Seleccionar casos existentes"};
+        String[] options = {"Ver síntomas", "Editar medicación", "Editar exámenes", "Seleccionar caso clínico"};
         check_box = (CheckBox) findViewById(R.id.done_button);
         management_list = (ListView)findViewById(R.id.managament_list);
         patient_text = (TextView)findViewById(R.id.patient_label);
@@ -54,12 +56,19 @@ public class AppointmentInfoActivity extends AppCompatActivity {
         update_button = (Button)findViewById(R.id.update_button);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, options);
         management_list.setAdapter(adapter);
-        dialog_list = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+        cases_adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+        medication_adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+        tests_adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+        medication = "";
+        tests = "";
         set_ui();
-        get_cases_list();
+        get_info();
         get_option_clicked();
     }
 
+    /**
+     * prepara la interfaz con la información de la cita.
+     */
     private void set_ui() {
         RequestManager.wait_for_response(1000);
         JSONObject info = JSONHandler.parse(RequestManager.GET_REQUEST_DATA());
@@ -74,16 +83,17 @@ public class AppointmentInfoActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * listeners de la lista, botones y checkbox.
+     */
     private void get_option_clicked() {
         management_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 2 || position == 1) {
-                    show_dialog(position, (String)parent.getItemAtPosition(position));
-                }else if (position == 0){
-                    show_symptoms_dialog();
+                if (position != 0){
+                    show_dialog(position);
                 }else {
-                    show_cases_list_dialog();
+                    show_symptoms_dialog();
                 }
             }
         });
@@ -117,46 +127,28 @@ public class AppointmentInfoActivity extends AppCompatActivity {
         });
     }
 
-    private void show_dialog(final int position, String option){
+    /**
+     * Muetsra un mensaje para editar detalles de la cita.
+     * @param position la posición del item que se escogió.
+     */
+    private void show_dialog(final int position){
 
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-        dialog.setTitle(option);
-        dialog.setMessage("Introduce el contenido, si son varias especificaciones sepárelos por coma.");
-
-        final EditText edit_text = new EditText(this);
-        dialog.setView(edit_text);
-        dialog.setPositiveButton("Editar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                save_info(position,edit_text);
-            }
-        });
-        dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
-    }
-
-
-
-    private void save_info(int position, EditText text_field){
         switch (position){
-            case 0:
-                symptoms = text_field.getText().toString();
-                break;
             case 1:
-                medication = text_field.getText().toString();
+                show_medication_list();
                 break;
             case 2:
-                tests = text_field.getText().toString();
+                show_tests_list();
+                break;
+            case 3:
+                show_cases_list_dialog();
                 break;
         }
     }
 
+    /**
+     * Muestra un mensaje cuando se quiere realizar una acción inválida.
+     */
     private void show_dialog(){
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -172,6 +164,9 @@ public class AppointmentInfoActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     *  Muestra los síntomas registrados por el usuario.
+     */
     private void show_symptoms_dialog(){
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -187,6 +182,9 @@ public class AppointmentInfoActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     * Muestra una lista de casos clínicos.
+     */
     private void show_cases_list_dialog(){
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -195,7 +193,7 @@ public class AppointmentInfoActivity extends AppCompatActivity {
         dialog.setMessage("Elige un caso clínico");
 
         final ListView cases = new ListView(this);
-        cases.setAdapter(dialog_list);
+        cases.setAdapter(cases_adapter);
         dialog.setView(cases);
 
         dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -219,28 +217,154 @@ public class AppointmentInfoActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void populate_adapter(String list) {
+    /**
+     * Muestra una lista de exámenes médicos.
+     */
+    private void show_tests_list(){
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Exámenes Médicos");
+        dialog.setMessage("Elige los exámenes");
+
+        final ListView tests_list = new ListView(this);
+        tests_list.setAdapter(tests_adapter);
+        dialog.setView(tests_list);
+
+        dialog.setNegativeButton("Listo", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        tests_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String selected = (String)parent.getItemAtPosition(position);
+                /*if (tests == null){
+                    tests = selected + ",";
+                }else {
+                    tests += selected + ",";
+                }*/
+                tests += selected + ",";
+            }
+        });
+        dialog.show();
+    }
+
+    /**
+     * Muestra una lista de medicamentos.
+     */
+    private void show_medication_list(){
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Medicamentos disponibles");
+        dialog.setMessage("Elige los medicamentos");
+
+        final ListView medication_list = new ListView(this);
+        medication_list.setAdapter(medication_adapter);
+        dialog.setView(medication_list);
+
+        dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        medication_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String selected = (String)parent.getItemAtPosition(position);
+                /*if (medication == null){
+                    medication = selected + ",";
+                }else {
+                    medication += selected + ",";
+                }*/
+                medication += selected + ",";
+            }
+        });
+        dialog.show();
+    }
+
+
+    /**
+     * procesa la lista de casos que viene desde el servidor.
+     * @param list la lista en json.
+     */
+    private void populate_cases_adapter(String list) {
         try {
             JSONObject cases_list = new JSONObject(list);
             JSONArray array = cases_list.getJSONArray("cases");
 
             for (int i = 0; i < array.length(); i++){
-                dialog_list.add((String) array.get(i));
+                cases_adapter.add((String) array.get(i));
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private void get_cases_list(){
-        RequestManager.GET("cases");
-        RequestManager.wait_for_response(1000);
-        populate_adapter(RequestManager.GET_REQUEST_DATA());
+    /**
+     * procesa la lista de examenes que viene desde el servidor.
+     * @param list la lista en json.
+     */
+    private void populate_tests_adapter(String list) {
+        try {
+            JSONObject cases_list = new JSONObject(list);
+            JSONArray array = cases_list.getJSONArray("tests");
+
+            for (int i = 0; i < array.length(); i++){
+                tests_adapter.add((String) array.get(i));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
+    /**
+     * procesa la lista de medicamentos que viene desde el servidor.
+     * @param list la lista en json.
+     */
+    private void populate_medication_adapter(String list) {
+        try {
+            JSONObject cases_list = new JSONObject(list);
+            JSONArray array = cases_list.getJSONArray("medication");
+
+            for (int i = 0; i < array.length(); i++){
+                medication_adapter.add((String) array.get(i));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Petición para obtener las lista de casos, examenes y medicamentos.
+     */
+    private void get_info(){
+        RequestManager.GET("cases");
+        RequestManager.wait_for_response(1000);
+        populate_cases_adapter(RequestManager.GET_REQUEST_DATA());
+
+        RequestManager.GET("tests");
+        RequestManager.wait_for_response(1000);
+        populate_tests_adapter(RequestManager.GET_REQUEST_DATA());
+
+        RequestManager.GET("medication");
+        RequestManager.wait_for_response(1000);
+        populate_medication_adapter(RequestManager.GET_REQUEST_DATA());
+
+
+    }
+
+    /**
+     * Petición para actualizar la información en el servidor.
+     */
     private void send_updated_info(){
-        Log.d("Path", String.valueOf(HomePageActivity.identifier) + "/appointments/" + patient_name);
-        Log.i("Info", JSONHandler.build_appointment_info(medication, tests, clinic_case));
+        Log.i("json",JSONHandler.build_appointment_info(medication, tests, clinic_case));
         RequestManager.PUT(String.valueOf(HomePageActivity.identifier) + "/appointments/" + patient_name, JSONHandler.build_appointment_info(medication, tests, clinic_case));
     }
 }

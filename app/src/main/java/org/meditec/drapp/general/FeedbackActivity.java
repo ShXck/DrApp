@@ -45,10 +45,11 @@ public class FeedbackActivity extends AppCompatActivity {
     private void process_list(String comments){
 
         try {
-            JSONObject array = new JSONObject(comments);
+            JSONObject json = new JSONObject(comments);
+            JSONArray array = json.getJSONArray("comments");
 
             for (int i = 0; i < array.length(); i++){
-                comments_adapter.add(array.getString(String.valueOf(i + 1)));
+                comments_adapter.add((String) array.get(i));
             }
         } catch (JSONException e) {
             e.printStackTrace();

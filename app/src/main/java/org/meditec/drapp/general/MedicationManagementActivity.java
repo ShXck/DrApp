@@ -231,6 +231,9 @@ public class MedicationManagementActivity extends AppCompatActivity {
         price_field.getText().clear();
     }
 
+    /**
+     * Actualiza la actividad.
+     */
     private void update(){
         Intent intent = getIntent();
         finish();

@@ -18,10 +18,15 @@ public class RequestManager {
     private static OkHttpClient client = new OkHttpClient();
     private static String recent_data;
 
+    /**
+     * Crea un recurso en el servidor.
+     * @param parameter el path.
+     * @param data la información del nuevo recurso.
+     */
     public static void POST(String parameter, String data){
 
         String URL =  "http://192.168.1.6:7500/MediTECServer/meditec/medics/" + parameter;
-        //String URL =  "http://172.19.12.235:7500/MediTECServer/meditec/medics/" + parameter;
+        //String URL =  "http://172.19.12.55:7500/MediTECServer/meditec/medics/" + parameter;
 
         try{
             MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -53,10 +58,15 @@ public class RequestManager {
         }
     }
 
+    /**
+     * Elimina un recurso en el servidor.
+     * @param parameter el path.
+     * @param data la información del recurso.
+     */
     public static void DELETE(String parameter, String data){
 
         String URL =  "http://192.168.1.6:7500/MediTECServer/meditec/medics/" + parameter;
-        //String URL =  "http://172.19.12.235:7500/MediTECServer/meditec/medics/" + parameter;
+        //String URL =  "http://172.19.12.55:7500/MediTECServer/meditec/medics/" + parameter;
 
         try{
             MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -88,10 +98,14 @@ public class RequestManager {
         }
     }
 
+    /**
+     * Obtiene un recurso del servidor.
+     * @param parameter el path.
+     */
     public static void GET(String parameter){
 
         String URL =  "http://192.168.1.6:7500/MediTECServer/meditec/medics/" + parameter;
-        //String URL =  "http://172.19.12.235:7500/MediTECServer/meditec/medics/" + parameter;
+        //String URL =  "http://172.19.12.55:7500/MediTECServer/meditec/medics/" + parameter;
 
         Request request = new Request.Builder()
                 .url(URL)
@@ -114,10 +128,15 @@ public class RequestManager {
         });
     }
 
+    /**
+     * Actualiza un recurso en el servidor.
+     * @param parameter el path.
+     * @param data la información actualizada.
+     */
     public static void PUT(String parameter, String data){
 
         String URL =  "http://192.168.1.6:7500/MediTECServer/meditec/medics/" + parameter;
-        //String URL =  "http://172.19.12.235:7500/MediTECServer/meditec/medics/" + parameter;
+        //String URL =  "http://172.19.12.55:7500/MediTECServer/meditec/medics/" + parameter;
 
         try{
             MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -149,14 +168,25 @@ public class RequestManager {
         }
     }
 
+    /**
+     * Guarda la última respuesta.
+     * @param data la información de la respuesta.
+     */
     private static void SAVE_RESPONSE_DATA(String data){
         recent_data = data;
     }
 
+    /**
+     * @return La información de la última respuesta.
+     */
     public static String GET_REQUEST_DATA(){
         return recent_data;
     }
 
+    /**
+     * Espera por el servidor en repsonder.
+     * @param time el tiempo que espera (ms).
+     */
     public static void wait_for_response(int time){
         try {
             Thread.sleep(time);

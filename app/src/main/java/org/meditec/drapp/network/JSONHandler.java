@@ -52,10 +52,10 @@ public class JSONHandler {
         JSONObject info = new JSONObject();
         String message = "none";
         try {
-            if (medication != null) info.put("medication", medication);
+            if (medication != "") info.put("medication", medication);
             else info.put("medication",message);
 
-            if (tests != null) info.put("tests",tests);
+            if (tests != "") info.put("tests",tests);
             else info.put("tests", message);
 
             if (clinic_cases != null) info.put("cases", clinic_cases);

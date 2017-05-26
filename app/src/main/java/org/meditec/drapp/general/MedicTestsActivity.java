@@ -241,6 +241,9 @@ public class MedicTestsActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Actualiza la actividad.
+     */
     private void update(){
         Intent intent = getIntent();
         finish();

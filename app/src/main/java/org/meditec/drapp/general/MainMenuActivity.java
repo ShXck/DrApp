@@ -36,11 +36,17 @@ public class MainMenuActivity extends AppCompatActivity {
         get_button_clickced();
     }
 
+    /**
+     * Asigna el id del médico.
+     */
     private void set_user_information() {
-        Log.d("ID", RequestManager.GET_REQUEST_DATA());
+        Log.i("ID", RequestManager.GET_REQUEST_DATA());
         if (HomePageActivity.identifier == null) HomePageActivity.identifier = JSONHandler.deserialize_identifier(RequestManager.GET_REQUEST_DATA());
     }
 
+    /**
+     * Listener del menú.
+     */
     private void get_button_clickced() {
 
         menu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
